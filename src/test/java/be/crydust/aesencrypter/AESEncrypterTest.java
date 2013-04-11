@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.crydust.aesencrypter;
 
 import java.io.File;
@@ -13,10 +9,6 @@ import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
-/**
- *
- * @author kristof
- */
 public class AESEncrypterTest {
 
     @Rule

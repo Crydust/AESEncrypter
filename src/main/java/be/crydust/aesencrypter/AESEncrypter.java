@@ -56,10 +56,10 @@ public final class AESEncrypter {
     private final byte[] salt;
     private final byte[] iv;
 
-    public static boolean encrypt(String password, Path plain, Path enc) {
+    public static boolean encrypt(String password, Path plain, Path encrypted) {
         try (
-                OutputStream encOut = new Base64OutputStream(new BufferedOutputStream(new FileOutputStream(enc.toFile(), false)));
-                DataOutputStream encDataOutputStream = new DataOutputStream(encOut);
+                OutputStream encryptedOut = new Base64OutputStream(new BufferedOutputStream(new FileOutputStream(encrypted.toFile(), false)));
+                DataOutputStream encDataOutputStream = new DataOutputStream(encryptedOut);
                 InputStream plainIn = new BufferedInputStream(new FileInputStream(plain.toFile()));) {
             AESEncrypter aes;
             try {
@@ -70,7 +70,7 @@ public final class AESEncrypter {
                 encDataOutputStream.write(aes.salt);
                 encDataOutputStream.writeInt(aes.iv.length);
                 encDataOutputStream.write(aes.iv);
-                applyCypher(plainIn, aes.encrypter, encOut);
+                applyCypher(plainIn, aes.encrypter, encryptedOut);
                 return true;
             } catch (NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException | InvalidKeyException | InvalidParameterSpecException | InvalidAlgorithmParameterException ex) {
                 // ignore
@@ -81,10 +81,10 @@ public final class AESEncrypter {
         return false;
     }
 
-    public static boolean decrypt(String password, Path enc, Path plain) {
+    public static boolean decrypt(String password, Path encrypted, Path plain) {
         try (
-                InputStream encIn = new Base64InputStream(new BufferedInputStream(new FileInputStream(enc.toFile())));
-                DataInputStream encDataInputStream = new DataInputStream(encIn);
+                InputStream encryptedIn = new Base64InputStream(new BufferedInputStream(new FileInputStream(encrypted.toFile())));
+                DataInputStream encDataInputStream = new DataInputStream(encryptedIn);
                 OutputStream plainOut = new BufferedOutputStream(new FileOutputStream(plain.toFile(), true));) {
             int iterationCount = encDataInputStream.readInt();
             int keyLength = encDataInputStream.readInt();
@@ -95,12 +95,12 @@ public final class AESEncrypter {
             byte[] iv = new byte[ivLength];
             encDataInputStream.read(iv);
             AESEncrypter aes = new AESEncrypter(password, salt, iv, iterationCount, keyLength);
-            applyCypher(encIn, aes.decrypter, plainOut);
+            applyCypher(encryptedIn, aes.decrypter, plainOut);
             return true;
         } catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException ex) {
             // ignore
         }
-            return false;
+        return false;
     }
 
     private static void applyCypher(InputStream in, Cipher cipher, OutputStream out) throws FileNotFoundException, IOException {
