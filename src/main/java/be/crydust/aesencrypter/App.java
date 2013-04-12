@@ -73,8 +73,8 @@ public class App {
         if (!validInput) {
             System.out.println(""
                     + "usage:\n"
-                    + "java -cp * be.crydust.aesencrypter.App -e -p password -i plain.txt -o encrypted.aes\n"
-                    + "java -cp * be.crydust.aesencrypter.App -d -p password -i encrypted.aes -o plain.txt");
+                    + "java -jar AESEncrypter-0.1.one-jar.jar -e -p password -i plain.txt -o encrypted.aes\n"
+                    + "java -jar AESEncrypter-0.1.one-jar.jar -d -p password -i encrypted.aes -o plain.txt");
         } else {
             if (encrypt) {
                 System.out.printf("encrypt %s -> %s%n", in, out);
