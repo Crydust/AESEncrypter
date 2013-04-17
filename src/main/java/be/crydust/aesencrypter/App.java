@@ -7,7 +7,7 @@ public class App {
 
     private static final int MIN_PASSWORD_LENGTH = 3;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws AESException {
         int argc = args.length;
         Path in = null;
         Path out = null;
@@ -47,12 +47,12 @@ public class App {
                 default:
             }
         }
-        
+
         if (!(encrypt || decrypt)) {
             System.out.println("Choose encrypt or decrypt.");
         } else if (encrypt && decrypt) {
             System.out.println("Choose encrypt or decrypt, not both.");
-        } if (in == null) {
+        } else if (in == null) {
             System.out.println("No input given.");
         } else if (out == null) {
             System.out.println("No output given.");

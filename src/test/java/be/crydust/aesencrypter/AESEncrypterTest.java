@@ -15,7 +15,7 @@ public class AESEncrypterTest {
     public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
-    public void testEncryptAndDecryptSimpleStrings() throws UnsupportedEncodingException {
+    public void testEncryptAndDecryptSimpleStrings() throws UnsupportedEncodingException, AESException {
         String password, plaintext;
         password = "";
         plaintext = "";
@@ -31,29 +31,29 @@ public class AESEncrypterTest {
         checkEncryptAndDecryptSimpleStrings(password, plaintext);
     }
 
-    private void checkEncryptAndDecryptSimpleStrings(String password, String plaintext) throws UnsupportedEncodingException {
+    private void checkEncryptAndDecryptSimpleStrings(String password, String plaintext) throws UnsupportedEncodingException, AESException {
         String encrypted1 = AESEncrypter.encrypt(password, plaintext);
         String encrypted2 = AESEncrypter.encrypt(password, plaintext);
 
         assertNotNull(encrypted1);
         assertEquals(AESEncrypter.decrypt(password, encrypted1), plaintext);
-        @SuppressWarnings({"unused", "MismatchedReadAndWriteOfArray"})
+        @SuppressWarnings("unused")
         byte[] dummy1 = encrypted1.getBytes("ASCII");
 
         assertNotNull(encrypted2);
         assertEquals(AESEncrypter.decrypt(password, encrypted2), plaintext);
-        @SuppressWarnings({"unused", "MismatchedReadAndWriteOfArray"})
+        @SuppressWarnings("unused")
         byte[] dummy2 = encrypted2.getBytes("ASCII");
 
         assertNotEquals(encrypted1, encrypted2);
     }
 
     @Test
-    public void testEncryptAndDecryptFiles() throws IOException {
+    public void testEncryptAndDecryptFiles() throws IOException, AESException {
         String encoding = "UTF-8";
         String plaintext = "Hello World";
         String password = "password";
-        
+
         File plainFile = folder.newFile();
         File encryptedFile = folder.newFile();
         File decryptedFile = folder.newFile();
@@ -65,7 +65,7 @@ public class AESEncrypterTest {
         AESEncrypter.decrypt(password, encryptedFile.toPath(), decryptedFile.toPath());
         String decrypted = new String(Files.readAllBytes(decryptedFile.toPath()), encoding);
         System.out.printf("decrypted = %s%n", decrypted);
-        
+
         assertNotEquals(plaintext, encrypted);
         assertEquals(plaintext, decrypted);
     }
