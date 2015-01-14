@@ -46,6 +46,7 @@ public final class AESEncrypter {
     private static final int ITERATION_COUNT_MIN = 1024;
     private static final int ITERATION_COUNT_MAX = 2048;
     private static final int KEY_LENGTH = 128;
+    private static final Random RANDOM = new SecureRandom();
     private final Cipher encrypter;
     private final Cipher decrypter;
     private final int iterationCount;
@@ -112,14 +113,6 @@ public final class AESEncrypter {
         return result;
     }
 
-    public Cipher getEncrypter() {
-        return encrypter;
-    }
-
-    public Cipher getDecrypter() {
-        return decrypter;
-    }
-
     /**
      * AESEncrypter that can encrypt and decrypt
      *
@@ -135,14 +128,13 @@ public final class AESEncrypter {
             InvalidKeySpecException, NoSuchPaddingException,
             InvalidKeyException, InvalidParameterSpecException,
             InvalidAlgorithmParameterException {
-        Random random = new SecureRandom();
-
+        
         this.iterationCount = nextIntInRange(ITERATION_COUNT_MIN,
-                ITERATION_COUNT_MAX, random);
+                ITERATION_COUNT_MAX, RANDOM);
         this.keyLength = KEY_LENGTH;
 
         this.salt = new byte[8];
-        random.nextBytes(this.salt);
+        RANDOM.nextBytes(this.salt);
 
         Key key = generateKey(password, this.salt, this.iterationCount,
                 this.keyLength);
@@ -248,7 +240,7 @@ public final class AESEncrypter {
         }
     }
 
-    public static void decrypt(String password, InputStream encrypted, OutputStream plain)
+    private static void decrypt(String password, InputStream encrypted, OutputStream plain)
             throws IOException, NoSuchAlgorithmException,
             InvalidKeySpecException, NoSuchPaddingException,
             InvalidKeyException, InvalidAlgorithmParameterException, AESException {
